@@ -13,7 +13,7 @@ import reactor.core.publisher.Mono;
 @RestController
 @RequestMapping(CategoryController.URL)
 public class CategoryController {
-    public static final String URL = "api/v1/categories";
+    public static final String URL = "/api/v1/categories";
     private final CategoryRepository categoryRepository;
 
     public CategoryController(CategoryRepository categoryRepository) {
