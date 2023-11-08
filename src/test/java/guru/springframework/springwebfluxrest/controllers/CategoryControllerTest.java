@@ -6,12 +6,12 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
 import org.mockito.Mockito;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.reactivestreams.Publisher;
 import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 
 class CategoryControllerTest {
 
@@ -27,7 +27,7 @@ class CategoryControllerTest {
     }
 
     @Test
-    void list() {
+    void listTest() {
         BDDMockito.given(categoryRepository.findAll())
                 .willReturn(Flux.just(Category.builder().description("cat1").build(),
                         Category.builder().description("cat2").build()));
@@ -40,7 +40,7 @@ class CategoryControllerTest {
     }
 
     @Test
-    void getById() {
+    void getByIdTest() {
         BDDMockito.given(categoryRepository.findById("id"))
                 .willReturn (Mono.just(Category.builder().description("cat1").build()));
 
@@ -48,5 +48,21 @@ class CategoryControllerTest {
                 .uri(CategoryController.URL+"/id")
                 .exchange()
                 .expectBodyList(Category.class);
+    }
+
+    @Test
+    void createTest() {
+        BDDMockito.given(categoryRepository.saveAll(any(Publisher.class)))
+                .willReturn(Flux.just(Category.builder().build()));
+
+        Mono<Category> catToSaveMono = Mono.just(Category.builder().description("some description").build());
+
+        webTestClient.post()
+                .uri(CategoryController.URL)
+                .body(catToSaveMono,Category.class)
+                .exchange()
+                .expectStatus()
+                .isCreated(); // Link to @ResponseStatus(HttpStatus.CREATED) in the method in the controller.
+
     }
 }
