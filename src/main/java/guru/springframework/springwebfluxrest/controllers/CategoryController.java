@@ -4,6 +4,7 @@ package guru.springframework.springwebfluxrest.controllers;
 import guru.springframework.springwebfluxrest.domain.Category;
 import guru.springframework.springwebfluxrest.repositories.CategoryRepository;
 import org.reactivestreams.Publisher;
+import org.springframework.data.mongodb.repository.Update;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Flux;
@@ -34,5 +35,21 @@ public class CategoryController {
     @PostMapping
     Mono<Void> create(@RequestBody Publisher<Category> categoryStream) {
         return categoryRepository.saveAll(categoryStream).then();
+    }
+
+    @ResponseStatus(HttpStatus.OK)
+    @PutMapping("/{id}")
+    Mono<Category> update(@PathVariable String id,@RequestBody Category category) {
+        category.setId(id);
+        return categoryRepository.save(category);
+// TODO update with test
+
+//        return categoryRepository
+//                .findById(id)
+//                .flatMap(foundCategory -> {
+//                    category.setId(foundCategory.getId());
+//                    return categoryRepository.save(category);
+//                })
+//                .switchIfEmpty(Mono.error(new Exception("Category not found")));
     }
 }

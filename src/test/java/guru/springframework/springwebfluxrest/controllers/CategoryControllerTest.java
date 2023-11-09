@@ -11,6 +11,8 @@ import org.springframework.test.web.reactive.server.WebTestClient;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
+import java.net.URI;
+
 import static org.mockito.ArgumentMatchers.any;
 
 class CategoryControllerTest {
@@ -64,5 +66,20 @@ class CategoryControllerTest {
                 .expectStatus()
                 .isCreated(); // Link to @ResponseStatus(HttpStatus.CREATED) in the method in the controller.
 
+    }
+
+    @Test
+    void updateTest() {
+        BDDMockito.given(categoryRepository.save(any(Category.class)))
+                .willReturn(Mono.just(Category.builder().build()));
+
+        Mono<Category> catToUpdateMono = Mono.just(Category.builder().description("Some cat").build());
+
+        webTestClient.put()
+                .uri(CategoryController.URL+"/idValue")
+                .body(catToUpdateMono,Category.class)
+                .exchange()
+                .expectStatus()
+                .isOk();
     }
 }
