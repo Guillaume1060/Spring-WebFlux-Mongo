@@ -38,7 +38,8 @@ public class CategoryController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @PutMapping("/{id}")
+    // @PutMapping("/{id}") - To avoid 405 i use below RequestMapping
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
     Mono<Category> update(@PathVariable String id,@RequestBody Category category) {
         category.setId(id);
         return categoryRepository.save(category);

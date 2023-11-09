@@ -36,7 +36,8 @@ public class VendorController {
     }
 
     @ResponseStatus(HttpStatus.OK)
-    @PutMapping("/{id}")
+    // @PutMapping("/{id}") - To avoid 405 i use below RequestMapping
+    @RequestMapping(value = "/{id}", method = RequestMethod.PUT)
     Mono<Vendor> updateVendor(@PathVariable String id,@RequestBody Vendor vendor) {
         vendor.setId(id);
         return vendorRepository.save(vendor);
